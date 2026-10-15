@@ -353,4 +353,19 @@ Nothing. The prompt and the file-tree screenshots gave the repo visibility, wher
 
 ### Evidence
 
-- To be added.
+- **Repository (public):** https://github.com/qtpeacock/campus-customs-hw5. The same URL is in `output/github_url.txt`.
+- **Matched the required layout exactly.** `backend/` now holds only `main.py`, `models.py` and `prompts/` (5 files):
+  - The earlier `agents.py`, `audit.py` and `team.py` were folded into `main.py` as six labeled parts (setup, audit trail, agent team, entry points, FastAPI routes, command line).
+  - The harness and MCP README were updated to point at `main.py`.
+  - The merged backend reloaded cleanly: every route returned 200 and checking was still $152.
+  - A real agent run through the merged code, against a scratch database and scratch audit file, answered correctly with gpt-6-luna. The graded database and audit trail were untouched (1,078 entries before and after).
+- **Added the repo files:**
+  - `README.md` covers: copy the original DB to the working copy for a clean run, start the MCP server, start the FastAPI backend, start the React board, and reset before a full three-ticket run. It also has setup, the run walk-through and the shop rules.
+  - `.gitignore` keeps out `.env`, `.venv`, `node_modules`, `.claude/`, `data.zip` and `data/last_reset.txt`.
+  - `.env.example` has a placeholder key only.
+- **Real `.env` not pushed.** There is no `.env` in HW5 (the key lives in the course folder above). Before the commit, a scan of all 52 staged files found the real key in 0 of them, no token patterns, and no email addresses.
+- **Both databases included:** `data/campus_customs.db` (original, unchanged) and `data/campus_customs_new.db` (the graded end state: all three tickets resolved, checking $152.00).
+- **Verified after pushing:**
+  - GitHub reports the repo as PUBLIC, and the page loads without logging in (HTTP 200).
+  - An anonymous `git clone` (no saved credentials) has all 52 files in the expected tree, with no `.env`, `.venv` or `node_modules`, and both databases byte-identical to the local ones.
+  - Starting the clone's backend on port 8010 returned gpt-6-luna, checking $152.00, tickets 101–103 resolved, and the 1,078-entry audit trail. Its process tree was then stopped.
