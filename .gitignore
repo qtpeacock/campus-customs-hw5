@@ -1,0 +1,27 @@
+# Secrets: the real .env is never committed (the .env.example template is)
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Node / Vite
+node_modules/
+frontend/dist/
+*.tsbuildinfo
+*.log
+
+# Local-only files (both databases under data/ ARE committed)
+.claude/
+data.zip
+data/last_reset.txt
+output/*.json.tmp
+output/audit_trail.corrupt-*.json
+
+# OS
+.DS_Store
+Thumbs.db

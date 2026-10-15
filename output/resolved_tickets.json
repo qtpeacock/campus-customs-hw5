@@ -1,0 +1,548 @@
+{
+  "generated_at": "2026-10-15T01:42:11+00:00",
+  "database": "data/campus_customs_new.db",
+  "shop_date": "2026-08-31",
+  "model": "gpt-6-luna (every agent, every response)",
+  "cash": {
+    "account": "checking",
+    "starting_balance": 3400.0,
+    "payments": [
+      {
+        "payment_id": 1,
+        "approval_id": 3,
+        "ticket_id": 102,
+        "kind": "rent",
+        "ref_id": 1,
+        "amount": 2400.0,
+        "approved_by": "Quinn",
+        "paid_at_shop_date": "2026-08-31",
+        "balance_after": 1000.0
+      },
+      {
+        "payment_id": 2,
+        "approval_id": 1,
+        "ticket_id": 101,
+        "kind": "invoice",
+        "ref_id": 501,
+        "amount": 840.0,
+        "approved_by": "Quinn",
+        "paid_at_shop_date": "2026-08-31",
+        "balance_after": 160.0
+      },
+      {
+        "payment_id": 3,
+        "approval_id": 2,
+        "ticket_id": 101,
+        "kind": "purchase_order",
+        "ref_id": 2,
+        "amount": 8.0,
+        "approved_by": "Quinn",
+        "paid_at_shop_date": "2026-08-31",
+        "balance_after": 152.0
+      }
+    ],
+    "total_paid": 3248.0,
+    "ending_balance": 152.0,
+    "matches_database": true
+  },
+  "tickets": [
+    {
+      "id": 101,
+      "type": "customer_order",
+      "requester": "Tauhid Zaman",
+      "subject": "Bulldog tee",
+      "final_status": "resolved",
+      "outcome": "Size S tee was out of stock and the only apparel vendor was blocked by overdue invoice 501. With approval, the shop paid invoice 501 ($840) and ordered 1 replacement tee ($8, earliest arrival 2026-09-05). Draft #1 tells Tauhid Zaman and offers M, L or XL in the meantime.",
+      "resolved_by": "Quinn (human)",
+      "resolved_at": "2026-10-15T01:35:03+00:00",
+      "agents": [
+        {
+          "agent": "Boss",
+          "asked_by": null,
+          "tools_used": {
+            "get_ticket": 2,
+            "check_stock": 1,
+            "get_invoice": 1,
+            "get_shop_date": 1,
+            "list_approvals": 1,
+            "add_ticket_note": 1,
+            "set_ticket_status": 1
+          },
+          "contributed": "Proceed with the size S restock plan, conditional on clearing the vendor invoice and human approval; do not substitute another size without the customer's agreement. Customer-facing draft is prepared, and the ticket is waiting for human decisions."
+        },
+        {
+          "agent": "Inventory",
+          "asked_by": [
+            "Boss"
+          ],
+          "tools_used": {
+            "get_ticket": 1,
+            "check_stock": 1,
+            "list_vendors": 1,
+            "get_shop_date": 1,
+            "get_invoice": 1,
+            "get_pricing": 1,
+            "add_ticket_note": 1
+          },
+          "contributed": "CC-TEE-WHITE size S: 0 on hand, need 1, short 1. Restock vendor Bulldog Print Co (apparel reprint, 5 days) is blocked by open invoice 501 ($840.00), 3 days overdue. Earliest arrival is 2026-09-05 if the invoice is paid, restock is approved, and ordered today. Alternative sizes of the same tee in stock: M 5, L 3, XL 2; these are options only if the customer agrees. No order was placed."
+        },
+        {
+          "agent": "Accounting",
+          "asked_by": [
+            "Boss"
+          ],
+          "tools_used": {
+            "get_cash_position": 1,
+            "list_approvals": 1,
+            "get_ticket": 1,
+            "get_invoice": 1,
+            "get_pricing": 1,
+            "list_vendors": 1,
+            "request_payment": 1,
+            "request_purchase_order": 1,
+            "add_ticket_note": 1
+          },
+          "contributed": "Cash was $3,400 available before requests. Filed pending approval #1 to pay invoice 501 for $840, then pending approval #2 for a one-unit CC-TEE-WHITE size S restock at the verified $8 cost. After both requests are committed, $2,552 remains available. The purchase order is still blocked by open invoice 501; neither payment nor order has occurred. If approved and the invoice blocker is cleared, the vendor's five-day lead time gives an earliest arrival of 2026-09-05."
+        },
+        {
+          "agent": "Customer Service",
+          "asked_by": [
+            "Boss"
+          ],
+          "tools_used": {
+            "get_ticket": 1,
+            "draft_customer_message": 1
+          },
+          "contributed": "Draft #1 to Tauhid Zaman: explained size S is out of stock, no restock order has been placed yet, gave the conditional earliest arrival estimate, and asked whether they’d accept M, L, or XL or prefer to wait for S."
+        }
+      ],
+      "delegations": [
+        {
+          "run": "ticket-101-20261015T012155-f32304",
+          "from": "Boss",
+          "to": "Inventory"
+        },
+        {
+          "run": "ticket-101-20261015T012155-f32304",
+          "from": "Boss",
+          "to": "Accounting"
+        },
+        {
+          "run": "ticket-101-20261015T012155-f32304",
+          "from": "Boss",
+          "to": "Customer Service"
+        }
+      ],
+      "human_approvals": [
+        {
+          "approval_id": 1,
+          "kind": "invoice_payment",
+          "amount": 840.0,
+          "moves_cash": true,
+          "requested_by": "Accounting",
+          "status": "paid",
+          "decided_by": "Quinn",
+          "decided_at": "2026-10-15T01:35:02+00:00",
+          "reason": "Request approval to pay Bulldog Print Co's overdue $840 invoice 501, which blocks the confirmed CC-TEE-WHITE size S customer restock; clearing it enables the vendor to ship."
+        },
+        {
+          "approval_id": 2,
+          "kind": "purchase_order",
+          "amount": 8.0,
+          "moves_cash": true,
+          "requested_by": "Accounting",
+          "status": "paid",
+          "decided_by": "Quinn",
+          "decided_at": "2026-10-15T01:35:03+00:00",
+          "reason": "Request approval for one CC-TEE-WHITE size S to fulfill the confirmed customer order shortfall; contingent on payment of Bulldog Print Co invoice 501, currently blocking shipment."
+        }
+      ],
+      "drafts_never_sent": [
+        {
+          "draft_id": 1,
+          "recipient": "Tauhid Zaman",
+          "subject": "Bulldog tee size options",
+          "written_by": "Customer Service"
+        }
+      ],
+      "cash_change": -848.0,
+      "payments": [
+        {
+          "payment_id": 2,
+          "approval_id": 1,
+          "ticket_id": 101,
+          "kind": "invoice",
+          "ref_id": 501,
+          "amount": 840.0,
+          "approved_by": "Quinn",
+          "paid_at_shop_date": "2026-08-31",
+          "balance_after": 160.0
+        },
+        {
+          "payment_id": 3,
+          "approval_id": 2,
+          "ticket_id": 101,
+          "kind": "purchase_order",
+          "ref_id": 2,
+          "amount": 8.0,
+          "approved_by": "Quinn",
+          "paid_at_shop_date": "2026-08-31",
+          "balance_after": 152.0
+        }
+      ],
+      "runs": [
+        {
+          "root_run_id": "ticket-101-20261015T012155-f32304",
+          "status_at_end": "waiting_approval",
+          "usage": {
+            "requests": 21,
+            "input_tokens": 88143,
+            "output_tokens": 3427,
+            "tool_calls": 29
+          }
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "type": "rent_notice",
+      "requester": "Elm City Properties",
+      "subject": "Rent due",
+      "final_status": "resolved",
+      "outcome": "The rent notice matched lease 1 ($2,400, due 2026-09-02). With approval, the shop paid the rent, so the lease is now due 2026-10-02. Draft #2 acknowledges Elm City Properties.",
+      "resolved_by": "Quinn (human)",
+      "resolved_at": "2026-10-15T01:34:17+00:00",
+      "agents": [
+        {
+          "agent": "Boss",
+          "asked_by": null,
+          "tools_used": {
+            "get_ticket": 3,
+            "set_ticket_status": 1
+          },
+          "contributed": "Rent notice matches the lease, so I requested human approval for the $2,400 rent payment and left the ticket waiting for approval. A draft acknowledgment is saved for Elm City Properties; nothing was sent and payment has not been made."
+        },
+        {
+          "agent": "Facilities",
+          "asked_by": [
+            "Boss"
+          ],
+          "tools_used": {
+            "get_ticket": 1,
+            "get_lease": 1,
+            "get_cash_position": 1,
+            "list_approvals": 1,
+            "get_shop_date": 1,
+            "add_ticket_note": 1
+          },
+          "contributed": "Lease 1 Chapel Street shop: $2,400 due 2026-09-02, 2 days from the shop date (2026-08-31); the landlord matches the requester. The notice's “due in 2 days” matches the lease. Accounting requested payment as approval #3; it is pending human approval, not paid."
+        },
+        {
+          "agent": "Accounting",
+          "asked_by": [
+            "Facilities"
+          ],
+          "tools_used": {
+            "get_cash_position": 1,
+            "get_lease": 1,
+            "list_approvals": 1,
+            "get_ticket": 1,
+            "request_payment": 1
+          },
+          "contributed": "Filed rent payment request #3 for $2,400 from checking for lease 1. It is pending human approval; no money has moved. Available cash after this request is $152."
+        },
+        {
+          "agent": "Customer Service",
+          "asked_by": [
+            "Boss"
+          ],
+          "tools_used": {
+            "get_ticket": 1,
+            "draft_customer_message": 1
+          },
+          "contributed": "Draft #2 to Elm City Properties: acknowledges the $2,400 rent notice due September 2, 2026, and states payment is awaiting human approval and has not been paid."
+        }
+      ],
+      "delegations": [
+        {
+          "run": "ticket-102-20261015T012254-c87923",
+          "from": "Boss",
+          "to": "Facilities"
+        },
+        {
+          "run": "ticket-102-20261015T012254-c87923",
+          "from": "Boss",
+          "to": "Customer Service"
+        },
+        {
+          "run": "ticket-102-20261015T012254-c87923",
+          "from": "Facilities",
+          "to": "Accounting"
+        }
+      ],
+      "human_approvals": [
+        {
+          "approval_id": 3,
+          "kind": "rent_payment",
+          "amount": 2400.0,
+          "moves_cash": true,
+          "requested_by": "Accounting",
+          "status": "paid",
+          "decided_by": "Quinn",
+          "decided_at": "2026-10-15T01:34:17+00:00",
+          "reason": "Chapel Street shop rent to Elm City Properties, due 2026-09-02 in 2 days; request approval to meet the lease obligation and keep the shop open."
+        }
+      ],
+      "drafts_never_sent": [
+        {
+          "draft_id": 2,
+          "recipient": "Elm City Properties",
+          "subject": "Re: Rent due",
+          "written_by": "Customer Service"
+        }
+      ],
+      "cash_change": -2400.0,
+      "payments": [
+        {
+          "payment_id": 1,
+          "approval_id": 3,
+          "ticket_id": 102,
+          "kind": "rent",
+          "ref_id": 1,
+          "amount": 2400.0,
+          "approved_by": "Quinn",
+          "paid_at_shop_date": "2026-08-31",
+          "balance_after": 1000.0
+        }
+      ],
+      "runs": [
+        {
+          "root_run_id": "ticket-102-20261015T012254-c87923",
+          "status_at_end": "waiting_approval",
+          "usage": {
+            "requests": 18,
+            "input_tokens": 61831,
+            "output_tokens": 2388,
+            "tool_calls": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "type": "price_override",
+      "requester": "Yale AI Club",
+      "subject": "Bulk hoodie discount",
+      "final_status": "resolved",
+      "outcome": "Only 8 of the 20 size-M hoodies were in stock. A 10% bulk price ($52.20 each) was proposed and approved. The 12-hoodie restock ($264) was refused because only $152 was left and no money comes in. Draft #5 offers the Yale AI Club the 8 now at the approved price, or waiting.",
+      "resolved_by": "Boss",
+      "resolved_at": "2026-10-15T01:39:11+00:00",
+      "agents": [
+        {
+          "agent": "Boss",
+          "asked_by": null,
+          "tools_used": {
+            "get_ticket": 6,
+            "check_stock": 2,
+            "get_pricing": 1,
+            "set_ticket_status": 5,
+            "get_shop_date": 1,
+            "list_approvals": 1,
+            "add_ticket_note": 1
+          },
+          "contributed": [
+            "No discount can be proposed or submitted for approval until the customer specifies a rate or price; no price override was requested. Keep the ticket in progress while awaiting those terms and resolving the 12-unit size-M shortfall.",
+            "Proposed a 10% bulk discount and filed it for human approval; no discount has been granted. The ticket is waiting for that decision, with fulfillment still constrained by the 12-unit size-M shortfall.",
+            "Keep the proposed 10% bulk price override pending human approval; no discount or fulfillment is confirmed. The board now reflects that decision and the separate 12-unit size-M shortfall remains unresolved.",
+            "The 10% bulk price is approved at $52.20 per hoodie, but only 8 of 20 are available and the shop cannot currently fund the 12-unit restock. Keep the ticket in progress for the customer's choice between the 8 available and waiting for restock funding.",
+            "Honor the human-approved price of $52.20 per hoodie, but do not restock now: current cash cannot cover the 12-unit shortfall. The customer has an unsent draft offering 8 available hoodies now at that price or waiting; any reply can come as a new ticket."
+          ]
+        },
+        {
+          "agent": "Inventory",
+          "asked_by": [
+            "Boss"
+          ],
+          "tools_used": {
+            "get_ticket": 2,
+            "check_stock": 2,
+            "list_vendors": 2,
+            "get_shop_date": 2,
+            "get_pricing": 1,
+            "add_ticket_note": 2,
+            "get_invoice": 1
+          },
+          "contributed": [
+            "CC-HOOD-NAVY size M: 8 on hand, need 20, short 12. Other sizes available as possible customer-approved alternatives: L 14, S 4, XL 6; no substitution made. Restock vendor Bulldog Print Co (apparel reprint, 5 days) is blocked by open invoice 501 ($840); earliest arrival is 2026-09-05 if the invoice is paid, the order is approved, and it is placed today. Restocking 12 has a listed cost of $264. No order placed.",
+            "CC-HOOD-NAVY size M: 8 on hand, need 20, short 12. Restock vendor Bulldog Print Co (apparel reprint, 5-day lead) has no current blocking open invoice; invoice 501 ($840) is paid. Earliest arrival is 2026-09-05 if approved and ordered today. No order was placed."
+          ]
+        },
+        {
+          "agent": "Accounting",
+          "asked_by": [
+            "Boss"
+          ],
+          "tools_used": {
+            "get_ticket": 3,
+            "get_pricing": 3,
+            "list_approvals": 3,
+            "get_cash_position": 3,
+            "add_ticket_note": 3,
+            "request_price_override": 1,
+            "request_purchase_order": 1
+          },
+          "contributed": [
+            "No price-override request was queued: the ticket says “bulk discount” but gives no rate or price, and filing one would require inventing the customer's requested terms. As an illustrative option for consideration (not a stated customer request), 10% off list is $52.20 per hoodie; margin is $30.20/unit (57.9% of price), or $604 total margin on 20, with $116 total discount. At list, margin is $36/unit (62.1%). Confirm a specific acceptable offer before requesting approval. Inventory has only 8 of the 20 requested size M hoodies, so 12 are short.",
+            "Filed pending price-override approval #4 for 10% off the 20 requested CC-HOOD-NAVY size M hoodies: $52.20 per hoodie, versus $58 list, with $30.20 margin per unit. That is a $116 total discount. No payment was requested, and no price has changed; human approval is required. Cash availability is $152, but the price override does not use cash.",
+            "I could not file the restock approval. The request for 12 units ($264) was refused because available cash is $152, leaving a $112 shortfall. No purchase order was placed."
+          ]
+        },
+        {
+          "agent": "Customer Service",
+          "asked_by": [
+            "Boss"
+          ],
+          "tools_used": {
+            "get_ticket": 3,
+            "draft_customer_message": 3,
+            "list_approvals": 1
+          },
+          "contributed": [
+            "Draft #3 to Yale AI Club: asks what discount or unit price they have in mind and explains that only 8 size M hoodies are currently available.",
+            "Draft #4 to Yale AI Club: explains the 10% offer ($52.20 vs. $58 list) requires human approval, only 8 of 20 size-M hoodies are available, and no delivery date is promised.",
+            "Draft #5 to Yale AI Club: explains the approved $52.20 unit price, current availability of 8 hoodies, and asks whether they want to proceed with 8 or wait while funding for the 12-unit restock is resolved."
+          ]
+        }
+      ],
+      "delegations": [
+        {
+          "run": "ticket-103-20261015T012523-a321b8",
+          "from": "Boss",
+          "to": "Inventory"
+        },
+        {
+          "run": "ticket-103-20261015T012523-a321b8",
+          "from": "Boss",
+          "to": "Accounting"
+        },
+        {
+          "run": "ticket-103-20261015T012523-a321b8",
+          "from": "Boss",
+          "to": "Customer Service"
+        },
+        {
+          "run": "ticket-103-20261015T012811-250e8b",
+          "from": "Boss",
+          "to": "Accounting"
+        },
+        {
+          "run": "ticket-103-20261015T012811-250e8b",
+          "from": "Boss",
+          "to": "Customer Service"
+        },
+        {
+          "run": "ticket-103-20261015T013702-76225f",
+          "from": "Boss",
+          "to": "Inventory"
+        },
+        {
+          "run": "ticket-103-20261015T013702-76225f",
+          "from": "Boss",
+          "to": "Accounting"
+        },
+        {
+          "run": "ticket-103-20261015T013702-76225f",
+          "from": "Boss",
+          "to": "Customer Service"
+        }
+      ],
+      "human_approvals": [
+        {
+          "approval_id": 4,
+          "kind": "price_override",
+          "amount": 1044.0,
+          "moves_cash": false,
+          "requested_by": "Accounting",
+          "status": "approved",
+          "decided_by": "Quinn",
+          "decided_at": "2026-10-15T01:34:53+00:00",
+          "reason": "Propose Boss-guided 10% bulk discount for Yale AI Club's 20 size-M hoodies: $52.20/unit versus $58 list, with $30.20/unit margin above $22 cost. Approval would establish concrete discount terms; only 8 are currently in stock, so separate stock resolution is needed for the remaining 12."
+        }
+      ],
+      "drafts_never_sent": [
+        {
+          "draft_id": 3,
+          "recipient": "Yale AI Club",
+          "subject": "Bulk hoodie request",
+          "written_by": "Customer Service"
+        },
+        {
+          "draft_id": 4,
+          "recipient": "Yale AI Club",
+          "subject": "Update on your bulk hoodie request",
+          "written_by": "Customer Service"
+        },
+        {
+          "draft_id": 5,
+          "recipient": "Yale AI Club",
+          "subject": "Update on your bulk hoodie request",
+          "written_by": "Customer Service"
+        }
+      ],
+      "cash_change": 0,
+      "payments": [],
+      "runs": [
+        {
+          "root_run_id": "ticket-103-20261015T012523-a321b8",
+          "status_at_end": "in_progress",
+          "usage": {
+            "requests": 18,
+            "input_tokens": 69369,
+            "output_tokens": 3114,
+            "tool_calls": 22
+          }
+        },
+        {
+          "root_run_id": "ticket-103-20261015T012811-250e8b",
+          "status_at_end": "waiting_approval",
+          "usage": {
+            "requests": 14,
+            "input_tokens": 59795,
+            "output_tokens": 2060,
+            "tool_calls": 13
+          }
+        },
+        {
+          "root_run_id": "ticket-103-20261015T013445-7d2599",
+          "status_at_end": "waiting_approval",
+          "usage": {
+            "requests": 4,
+            "input_tokens": 19568,
+            "output_tokens": 1043,
+            "tool_calls": 5
+          }
+        },
+        {
+          "root_run_id": "ticket-103-20261015T013702-76225f",
+          "status_at_end": "in_progress",
+          "usage": {
+            "requests": 18,
+            "input_tokens": 90565,
+            "output_tokens": 3077,
+            "tool_calls": 18
+          }
+        },
+        {
+          "root_run_id": "ticket-103-20261015T013901-9af695",
+          "status_at_end": "resolved",
+          "usage": {
+            "requests": 4,
+            "input_tokens": 22571,
+            "output_tokens": 863,
+            "tool_calls": 3
+          }
+        }
+      ]
+    }
+  ]
+}

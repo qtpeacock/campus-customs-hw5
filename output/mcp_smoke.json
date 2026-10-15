@@ -1,0 +1,747 @@
+{
+  "connection": {
+    "config_file": ".mcp.json",
+    "server": "campus-customs",
+    "transport": "stdio",
+    "command": ".venv/Scripts/python.exe mcp_server/server.py",
+    "database": "data/campus_customs_new.db",
+    "status": "connected to Claude Code (the vibe coder) with 3 tools: check_stock, get_invoice, get_lease"
+  },
+  "tested_on": "2026-10-14",
+  "shop_date_today": "2026-08-31",
+  "how": "Each prompt was answered by the vibe coder calling the tool through the connected MCP server. `output` is exactly what the server returned. `database_check` re-reads the same rows from data/campus_customs_new.db with plain SQL and compares every value. The 'tests' block is the Problem 4 run (2026-10-14, before the full run). 'recheck_after_full_run' repeats the same four calls on 2026-10-15 after Problem 9 changed the working database (invoice 501 paid, rent paid through 2026-10-02), so the outputs match data/campus_customs_new.db as it is now.",
+  "tests": [
+    {
+      "ticket": 101,
+      "prompt": "Ticket 101: does the shop have a Classic Bulldog Tee (CC-TEE-WHITE) in size S in stock for Tauhid Zaman's order of 1?",
+      "tool": "check_stock",
+      "arguments": {
+        "sku": "CC-TEE-WHITE",
+        "size": "S",
+        "qty_needed": 1
+      },
+      "output": {
+        "found": true,
+        "sku": "CC-TEE-WHITE",
+        "name": "Classic Bulldog Tee",
+        "size": "S",
+        "qty_on_hand": 0,
+        "location": "Aisle B",
+        "other_sizes": [
+          {
+            "size": "L",
+            "qty_on_hand": 3
+          },
+          {
+            "size": "M",
+            "qty_on_hand": 5
+          },
+          {
+            "size": "XL",
+            "qty_on_hand": 2
+          }
+        ],
+        "qty_needed": 1,
+        "shortfall": 1,
+        "can_fill_from_stock": false
+      },
+      "database_check": {
+        "query": "SELECT sku, name, size, qty, location FROM inventory WHERE sku='CC-TEE-WHITE'",
+        "checks": [
+          {
+            "field": "name",
+            "tool": "Classic Bulldog Tee",
+            "database": "Classic Bulldog Tee",
+            "match": true
+          },
+          {
+            "field": "qty_on_hand",
+            "tool": 0,
+            "database": 0,
+            "match": true
+          },
+          {
+            "field": "location",
+            "tool": "Aisle B",
+            "database": "Aisle B",
+            "match": true
+          },
+          {
+            "field": "other_sizes",
+            "tool": [
+              {
+                "size": "L",
+                "qty_on_hand": 3
+              },
+              {
+                "size": "M",
+                "qty_on_hand": 5
+              },
+              {
+                "size": "XL",
+                "qty_on_hand": 2
+              }
+            ],
+            "database": [
+              {
+                "size": "L",
+                "qty_on_hand": 3
+              },
+              {
+                "size": "M",
+                "qty_on_hand": 5
+              },
+              {
+                "size": "XL",
+                "qty_on_hand": 2
+              }
+            ],
+            "match": true
+          },
+          {
+            "field": "shortfall = qty_needed - qty",
+            "tool": 1,
+            "database": 1,
+            "match": true
+          }
+        ]
+      },
+      "matches_database": true
+    },
+    {
+      "ticket": 101,
+      "prompt": "Ticket 101 links to invoice 501. How much is owed, to which vendor, is it overdue, and will that vendor ship new product?",
+      "tool": "get_invoice",
+      "arguments": {
+        "invoice_id": 501
+      },
+      "output": {
+        "found": true,
+        "invoice_id": 501,
+        "amount": 840,
+        "due_date": "2026-08-28",
+        "status": "open",
+        "description": "Rush reprint CC-TEE-WHITE S",
+        "date_today": "2026-08-31",
+        "is_overdue": true,
+        "days_overdue": 3,
+        "vendor": {
+          "id": 1,
+          "name": "Bulldog Print Co",
+          "specialty": "apparel reprint",
+          "lead_days": 5
+        },
+        "vendor_open_invoices": [
+          {
+            "id": 501,
+            "amount": 840,
+            "due_date": "2026-08-28"
+          }
+        ],
+        "vendor_will_ship": false
+      },
+      "database_check": {
+        "query": "SELECT i.*, v.name, v.specialty, v.lead_days FROM invoices i JOIN vendors v ON v.id=i.vendor_id WHERE i.id=501",
+        "checks": [
+          {
+            "field": "amount",
+            "tool": 840,
+            "database": 840.0,
+            "match": true
+          },
+          {
+            "field": "due_date",
+            "tool": "2026-08-28",
+            "database": "2026-08-28",
+            "match": true
+          },
+          {
+            "field": "status",
+            "tool": "open",
+            "database": "open",
+            "match": true
+          },
+          {
+            "field": "description",
+            "tool": "Rush reprint CC-TEE-WHITE S",
+            "database": "Rush reprint CC-TEE-WHITE S",
+            "match": true
+          },
+          {
+            "field": "vendor.name",
+            "tool": "Bulldog Print Co",
+            "database": "Bulldog Print Co",
+            "match": true
+          },
+          {
+            "field": "vendor.specialty",
+            "tool": "apparel reprint",
+            "database": "apparel reprint",
+            "match": true
+          },
+          {
+            "field": "vendor.lead_days",
+            "tool": 5,
+            "database": 5,
+            "match": true
+          },
+          {
+            "field": "date_today",
+            "tool": "2026-08-31",
+            "database": "2026-08-31",
+            "match": true
+          },
+          {
+            "field": "days_overdue = date_today - due_date",
+            "tool": 3,
+            "database": 3,
+            "match": true
+          },
+          {
+            "field": "vendor_open_invoices",
+            "tool": [
+              501
+            ],
+            "database": [
+              501
+            ],
+            "match": true
+          }
+        ]
+      },
+      "matches_database": true
+    },
+    {
+      "ticket": 102,
+      "prompt": "Ticket 102 is Elm City Properties' rent notice for lease 1. How much is the rent, when is it due, and how many days away is that?",
+      "tool": "get_lease",
+      "arguments": {
+        "lease_id": 1
+      },
+      "output": {
+        "found": true,
+        "lease_id": 1,
+        "space_name": "Chapel Street shop",
+        "landlord": "Elm City Properties",
+        "monthly_rent": 2400,
+        "next_due": "2026-09-02",
+        "notes": null,
+        "date_today": "2026-08-31",
+        "days_until_due": 2,
+        "is_overdue": false
+      },
+      "database_check": {
+        "query": "SELECT * FROM leases WHERE id=1",
+        "checks": [
+          {
+            "field": "space_name",
+            "tool": "Chapel Street shop",
+            "database": "Chapel Street shop",
+            "match": true
+          },
+          {
+            "field": "landlord",
+            "tool": "Elm City Properties",
+            "database": "Elm City Properties",
+            "match": true
+          },
+          {
+            "field": "monthly_rent",
+            "tool": 2400,
+            "database": 2400.0,
+            "match": true
+          },
+          {
+            "field": "next_due",
+            "tool": "2026-09-02",
+            "database": "2026-09-02",
+            "match": true
+          },
+          {
+            "field": "date_today",
+            "tool": "2026-08-31",
+            "database": "2026-08-31",
+            "match": true
+          },
+          {
+            "field": "days_until_due = next_due - date_today",
+            "tool": 2,
+            "database": 2,
+            "match": true
+          }
+        ]
+      },
+      "matches_database": true
+    },
+    {
+      "ticket": 103,
+      "prompt": "Ticket 103: the Yale AI Club wants 20 Basic Hoodies (CC-HOOD-NAVY) in size M. How many are on hand and how many are we short?",
+      "tool": "check_stock",
+      "arguments": {
+        "sku": "CC-HOOD-NAVY",
+        "size": "M",
+        "qty_needed": 20
+      },
+      "output": {
+        "found": true,
+        "sku": "CC-HOOD-NAVY",
+        "name": "Basic Hoodie Big Yale",
+        "size": "M",
+        "qty_on_hand": 8,
+        "location": "Aisle A",
+        "other_sizes": [
+          {
+            "size": "L",
+            "qty_on_hand": 14
+          },
+          {
+            "size": "S",
+            "qty_on_hand": 4
+          },
+          {
+            "size": "XL",
+            "qty_on_hand": 6
+          }
+        ],
+        "qty_needed": 20,
+        "shortfall": 12,
+        "can_fill_from_stock": false
+      },
+      "database_check": {
+        "query": "SELECT sku, name, size, qty, location FROM inventory WHERE sku='CC-HOOD-NAVY'",
+        "checks": [
+          {
+            "field": "name",
+            "tool": "Basic Hoodie Big Yale",
+            "database": "Basic Hoodie Big Yale",
+            "match": true
+          },
+          {
+            "field": "qty_on_hand",
+            "tool": 8,
+            "database": 8,
+            "match": true
+          },
+          {
+            "field": "location",
+            "tool": "Aisle A",
+            "database": "Aisle A",
+            "match": true
+          },
+          {
+            "field": "other_sizes",
+            "tool": [
+              {
+                "size": "L",
+                "qty_on_hand": 14
+              },
+              {
+                "size": "S",
+                "qty_on_hand": 4
+              },
+              {
+                "size": "XL",
+                "qty_on_hand": 6
+              }
+            ],
+            "database": [
+              {
+                "size": "L",
+                "qty_on_hand": 14
+              },
+              {
+                "size": "S",
+                "qty_on_hand": 4
+              },
+              {
+                "size": "XL",
+                "qty_on_hand": 6
+              }
+            ],
+            "match": true
+          },
+          {
+            "field": "shortfall = qty_needed - qty",
+            "tool": 12,
+            "database": 12,
+            "match": true
+          }
+        ]
+      },
+      "matches_database": true
+    }
+  ],
+  "summary": {
+    "tools_tested": [
+      "check_stock",
+      "get_invoice",
+      "get_lease"
+    ],
+    "calls": 4,
+    "all_match_database": true,
+    "database_sha256": "23686a90d698f7fa6f901a3f0a9774db9cbb31e13151c9e5717275f3321f360a",
+    "working_copy_unchanged_from_original": true,
+    "note": "Problem 4 values matched the database on 2026-10-14; see recheck_after_full_run for the current database."
+  },
+  "recheck_after_full_run": {
+    "tested_on": "2026-10-15",
+    "via": "the vibe coder (Claude Code) calling the connected campus-customs MCP server",
+    "tests": [
+      {
+        "ticket": 101,
+        "prompt": "Ticket 101: does the shop have a Classic Bulldog Tee (CC-TEE-WHITE) in size S in stock for Tauhid Zaman's order of 1?",
+        "tool": "check_stock",
+        "arguments": {
+          "sku": "CC-TEE-WHITE",
+          "size": "S",
+          "qty_needed": 1
+        },
+        "output": {
+          "found": true,
+          "sku": "CC-TEE-WHITE",
+          "name": "Classic Bulldog Tee",
+          "size": "S",
+          "qty_on_hand": 0,
+          "location": "Aisle B",
+          "other_sizes": [
+            {
+              "size": "L",
+              "qty_on_hand": 3
+            },
+            {
+              "size": "M",
+              "qty_on_hand": 5
+            },
+            {
+              "size": "XL",
+              "qty_on_hand": 2
+            }
+          ],
+          "qty_needed": 1,
+          "shortfall": 1,
+          "can_fill_from_stock": false
+        },
+        "database_check": {
+          "query": "SELECT sku, name, size, qty, location FROM inventory WHERE sku='CC-TEE-WHITE'",
+          "checks": [
+            {
+              "field": "name",
+              "tool": "Classic Bulldog Tee",
+              "database": "Classic Bulldog Tee",
+              "match": true
+            },
+            {
+              "field": "qty_on_hand",
+              "tool": 0,
+              "database": 0,
+              "match": true
+            },
+            {
+              "field": "location",
+              "tool": "Aisle B",
+              "database": "Aisle B",
+              "match": true
+            },
+            {
+              "field": "other_sizes",
+              "tool": [
+                {
+                  "size": "L",
+                  "qty_on_hand": 3
+                },
+                {
+                  "size": "M",
+                  "qty_on_hand": 5
+                },
+                {
+                  "size": "XL",
+                  "qty_on_hand": 2
+                }
+              ],
+              "database": [
+                {
+                  "size": "L",
+                  "qty_on_hand": 3
+                },
+                {
+                  "size": "M",
+                  "qty_on_hand": 5
+                },
+                {
+                  "size": "XL",
+                  "qty_on_hand": 2
+                }
+              ],
+              "match": true
+            },
+            {
+              "field": "shortfall = qty_needed - qty",
+              "tool": 1,
+              "database": 1,
+              "match": true
+            }
+          ]
+        },
+        "matches_database": true
+      },
+      {
+        "ticket": 101,
+        "prompt": "Ticket 101 links to invoice 501. How much is owed, to which vendor, is it overdue, and will that vendor ship new product?",
+        "tool": "get_invoice",
+        "arguments": {
+          "invoice_id": 501
+        },
+        "output": {
+          "found": true,
+          "invoice_id": 501,
+          "amount": 840,
+          "due_date": "2026-08-28",
+          "status": "paid",
+          "description": "Rush reprint CC-TEE-WHITE S",
+          "date_today": "2026-08-31",
+          "is_overdue": false,
+          "days_overdue": 0,
+          "vendor": {
+            "id": 1,
+            "name": "Bulldog Print Co",
+            "specialty": "apparel reprint",
+            "lead_days": 5
+          },
+          "vendor_open_invoices": [],
+          "vendor_will_ship": true
+        },
+        "database_check": {
+          "query": "SELECT i.*, v.name, v.specialty, v.lead_days FROM invoices i JOIN vendors v ON v.id=i.vendor_id WHERE i.id=501",
+          "checks": [
+            {
+              "field": "amount",
+              "tool": 840,
+              "database": 840.0,
+              "match": true
+            },
+            {
+              "field": "due_date",
+              "tool": "2026-08-28",
+              "database": "2026-08-28",
+              "match": true
+            },
+            {
+              "field": "status",
+              "tool": "paid",
+              "database": "paid",
+              "match": true
+            },
+            {
+              "field": "description",
+              "tool": "Rush reprint CC-TEE-WHITE S",
+              "database": "Rush reprint CC-TEE-WHITE S",
+              "match": true
+            },
+            {
+              "field": "vendor.name",
+              "tool": "Bulldog Print Co",
+              "database": "Bulldog Print Co",
+              "match": true
+            },
+            {
+              "field": "vendor.specialty",
+              "tool": "apparel reprint",
+              "database": "apparel reprint",
+              "match": true
+            },
+            {
+              "field": "vendor.lead_days",
+              "tool": 5,
+              "database": 5,
+              "match": true
+            },
+            {
+              "field": "date_today",
+              "tool": "2026-08-31",
+              "database": "2026-08-31",
+              "match": true
+            },
+            {
+              "field": "days_overdue = date_today - due_date (0 once paid)",
+              "tool": 0,
+              "database": 0,
+              "match": true
+            },
+            {
+              "field": "vendor_open_invoices",
+              "tool": [],
+              "database": [],
+              "match": true
+            }
+          ]
+        },
+        "matches_database": true
+      },
+      {
+        "ticket": 102,
+        "prompt": "Ticket 102 is Elm City Properties' rent notice for lease 1. How much is the rent, when is it due, and how many days away is that?",
+        "tool": "get_lease",
+        "arguments": {
+          "lease_id": 1
+        },
+        "output": {
+          "found": true,
+          "lease_id": 1,
+          "space_name": "Chapel Street shop",
+          "landlord": "Elm City Properties",
+          "monthly_rent": 2400,
+          "next_due": "2026-10-02",
+          "notes": null,
+          "date_today": "2026-08-31",
+          "days_until_due": 32,
+          "is_overdue": false
+        },
+        "database_check": {
+          "query": "SELECT * FROM leases WHERE id=1",
+          "checks": [
+            {
+              "field": "space_name",
+              "tool": "Chapel Street shop",
+              "database": "Chapel Street shop",
+              "match": true
+            },
+            {
+              "field": "landlord",
+              "tool": "Elm City Properties",
+              "database": "Elm City Properties",
+              "match": true
+            },
+            {
+              "field": "monthly_rent",
+              "tool": 2400,
+              "database": 2400.0,
+              "match": true
+            },
+            {
+              "field": "next_due",
+              "tool": "2026-10-02",
+              "database": "2026-10-02",
+              "match": true
+            },
+            {
+              "field": "date_today",
+              "tool": "2026-08-31",
+              "database": "2026-08-31",
+              "match": true
+            },
+            {
+              "field": "days_until_due = next_due - date_today",
+              "tool": 32,
+              "database": 32,
+              "match": true
+            }
+          ]
+        },
+        "matches_database": true
+      },
+      {
+        "ticket": 103,
+        "prompt": "Ticket 103: the Yale AI Club wants 20 Basic Hoodies (CC-HOOD-NAVY) in size M. How many are on hand and how many are we short?",
+        "tool": "check_stock",
+        "arguments": {
+          "sku": "CC-HOOD-NAVY",
+          "size": "M",
+          "qty_needed": 20
+        },
+        "output": {
+          "found": true,
+          "sku": "CC-HOOD-NAVY",
+          "name": "Basic Hoodie Big Yale",
+          "size": "M",
+          "qty_on_hand": 8,
+          "location": "Aisle A",
+          "other_sizes": [
+            {
+              "size": "L",
+              "qty_on_hand": 14
+            },
+            {
+              "size": "S",
+              "qty_on_hand": 4
+            },
+            {
+              "size": "XL",
+              "qty_on_hand": 6
+            }
+          ],
+          "qty_needed": 20,
+          "shortfall": 12,
+          "can_fill_from_stock": false
+        },
+        "database_check": {
+          "query": "SELECT sku, name, size, qty, location FROM inventory WHERE sku='CC-HOOD-NAVY'",
+          "checks": [
+            {
+              "field": "name",
+              "tool": "Basic Hoodie Big Yale",
+              "database": "Basic Hoodie Big Yale",
+              "match": true
+            },
+            {
+              "field": "qty_on_hand",
+              "tool": 8,
+              "database": 8,
+              "match": true
+            },
+            {
+              "field": "location",
+              "tool": "Aisle A",
+              "database": "Aisle A",
+              "match": true
+            },
+            {
+              "field": "other_sizes",
+              "tool": [
+                {
+                  "size": "L",
+                  "qty_on_hand": 14
+                },
+                {
+                  "size": "S",
+                  "qty_on_hand": 4
+                },
+                {
+                  "size": "XL",
+                  "qty_on_hand": 6
+                }
+              ],
+              "database": [
+                {
+                  "size": "L",
+                  "qty_on_hand": 14
+                },
+                {
+                  "size": "S",
+                  "qty_on_hand": 4
+                },
+                {
+                  "size": "XL",
+                  "qty_on_hand": 6
+                }
+              ],
+              "match": true
+            },
+            {
+              "field": "shortfall = qty_needed - qty",
+              "tool": 12,
+              "database": 12,
+              "match": true
+            }
+          ]
+        },
+        "matches_database": true
+      }
+    ],
+    "all_match_database": true,
+    "what_changed_since_problem_4": [
+      "invoice 501: open -> paid (approval #1), so days_overdue 0 and vendor_will_ship true",
+      "lease 1 next_due: 2026-09-02 -> 2026-10-02 (approval #3), so days_until_due 32",
+      "stock unchanged: the tee order hasn't arrived and no hoodies were ordered"
+    ]
+  }
+}
